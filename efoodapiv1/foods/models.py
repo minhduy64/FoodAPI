@@ -94,7 +94,7 @@ class ReviewStore(InteractionStore):
     rating = models.IntegerField(null=True, validators=[MinValueValidator(0), MaxValueValidator(10)])
 
     def __str__(self):
-        return f"Review dfor {self.store} by {self.user.username}"
+        return f"Review for {self.store} by {self.user.username}"
 
 
 class LikeMenuItem(InteractionMenuItem):
