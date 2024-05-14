@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from foods.models import Category, Store, MenuItem, Tag, User
+from foods.models import Category, Store, MenuItem, Tag, User, Comment
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -38,7 +38,20 @@ class MenuItemDetailSerializer(MenuItemSerializer):
 
     class Meta:
         model = MenuItemSerializer.Meta.model
-        fields = MenuItemSerializer.Meta.fields + ['content', 'tags']
+        fields = MenuItemSerializer.Meta.fields + ['tags', 'content']
+
+
+class AuthenticatedMenuItemDetailSerializer(MenuItemDetailSerializer):
+    liked = serializers.SerializerMethodField()
+
+    def get_liked(self, menu_item):
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return menu_item.likes.filter(active=True, user=request.user).exists()
+
+    class Meta:
+        model = MenuItemDetailSerializer.Meta.model
+        fields = MenuItemDetailSerializer.Meta.fields + ['liked']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -56,3 +69,11 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True}
         }
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ['id', 'content', 'created_date', 'user']

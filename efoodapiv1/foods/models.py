@@ -47,6 +47,7 @@ class Store(BaseModel):
 
 class MenuItem(BaseModel):
     name = models.CharField(max_length=255)
+    type = models.CharField(max_length=255, null=True, blank=True)
     content = RichTextField()
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     image = CloudinaryField()
@@ -75,6 +76,19 @@ class InteractionStore(BaseModel):
         abstract = True
 
 
+class Comment(InteractionMenuItem):
+    content = models.CharField(max_length=255)
+
+    def save(self, *args, **kwargs):
+        if self.menu_item.available and self.menu_item.store == self.store:
+            super().save(*args, **kwargs)
+        else:
+            raise ValueError("The menu item is not available in the store.")
+
+    def __str__(self):
+        return f"Comment for {self.menu_item.name} by {self.user.username} ({self.store})"
+
+
 class ReviewMenuItem(InteractionMenuItem):
     content = models.CharField(max_length=255)
     rating = models.IntegerField(null=True, validators=[MinValueValidator(0), MaxValueValidator(10)])
@@ -98,7 +112,7 @@ class ReviewStore(InteractionStore):
 
 
 class LikeMenuItem(InteractionMenuItem):
-    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE, related_name='likes')
 
     class Meta:
         unique_together = ('menu_item', 'user')
