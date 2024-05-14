@@ -7,6 +7,8 @@ from foods import views
 r = routers.DefaultRouter()
 r.register('categories', views.CategoryViewSet, 'categories')
 r.register('stores', views.StoreViewSet, 'stores')
+r.register('menu_items', views.MenuItemViewSet, 'menu_items')
+r.register('users', views.UserViewSet, 'users')
 
 urlpatterns = [
     path('', include(r.urls))
