@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import mark_safe
-from foods.models import Store, Category, MenuItem, Tag, Comment, ReviewStore, ReviewMenuItem
+from foods.models import Store, Category, MenuItem, Tag, Comment, ReviewStore, ReviewMenuItem, Order, OrderItem, RevenueReport, AdminRevenueReport, LikeMenuItem, LikeStore
 from django import forms
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.template.response import TemplateResponse
@@ -34,7 +34,7 @@ class StoreForm(forms.ModelForm):
 
 
 class MyStoreAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'location', 'created_date', 'updated_date', 'active']
+    list_display = ['id', 'name', 'user', 'location', 'created_date', 'updated_date', 'active']
     search_fields = ['id', 'name']
     list_filter = ['created_date', 'name', 'active']
     readonly_fields = ['my_image']
@@ -52,5 +52,10 @@ admin_site.register(Tag)
 admin_site.register(Comment)
 admin_site.register(ReviewStore)
 admin_site.register(ReviewMenuItem)
+admin_site.register(Order)
+admin_site.register(OrderItem)
+admin_site.register(RevenueReport)
+admin_site.register(LikeMenuItem)
+admin_site.register(AdminRevenueReport)
 
 # Register your models here.

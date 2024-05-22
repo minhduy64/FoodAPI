@@ -1,0 +1,61 @@
+Metadata-Version: 2.1
+Name: django-osm-field
+Version: 0.5.0
+Summary: Django OpenStreetMap Field
+Home-page: https://github.com/MarkusH/django-osm-field
+Author: Markus Holtermann
+Author-email: info@markusholtermann.eu
+License: MIT
+Project-URL: CI, https://github.com/MarkusH/django-osm-field/actions
+Project-URL: Changelog, https://github.com/MarkusH/django-osm-field/blob/main/CHANGELOG.md
+Project-URL: Issues, https://github.com/MarkusH/django-osm-field/issues
+Keywords: OpenStreetMap,OSM,Django,Geo,Geoposition
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Web Environment
+Classifier: Framework :: Django
+Classifier: Framework :: Django :: 2.2
+Classifier: Framework :: Django :: 3.0
+Classifier: Framework :: Django :: 3.1
+Classifier: Framework :: Django :: 3.2
+Classifier: Framework :: Django :: 4.0
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Requires-Python: >=3.5
+Description-Content-Type: text/markdown
+License-File: LICENSE
+License-File: AUTHORS.rst
+Requires-Dist: Django (>=2.2)
+Provides-Extra: dev
+Requires-Dist: pre-commit ; extra == 'dev'
+Provides-Extra: docs
+Requires-Dist: Django ; extra == 'docs'
+Requires-Dist: sphinx-rtd-theme ; extra == 'docs'
+Requires-Dist: Sphinx (<3.4,>=3.0) ; extra == 'docs'
+Provides-Extra: test
+Requires-Dist: coverage[toml] (<6,>=5) ; extra == 'test'
+Requires-Dist: Django ; extra == 'test'
+
+# django-osm-field
+
+[![No Maintenance Intended](https://img.shields.io/badge/No%20Maintenance%20Intended-x-red.svg?style=for-the-badge)](http://unmaintained.tech/)
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/MarkusH/django-osm-field/Test%20&%20Deploy/main?style=for-the-badge)](https://github.com/MarkusH/django-osm-field/actions?query=branch%3Amain+event%3Apush)
+[![Codecov branch](https://img.shields.io/codecov/c/gh/MarkusH/django-osm-field/main?style=for-the-badge)](https://app.codecov.io/gh/MarkusH/django-osm-field/branch/main)
+[![Version](https://img.shields.io/pypi/v/django-osm-field?label=Version&style=for-the-badge)](https://pypi.org/project/django-osm-field/)
+![License](https://img.shields.io/pypi/l/django-osm-field?style=for-the-badge)
+![Python Versions](https://img.shields.io/pypi/pyversions/django-osm-field?label=Python&style=for-the-badge)
+![Django Versions](https://img.shields.io/pypi/djversions/django-osm-field?color=%230C4B33&label=Django&style=for-the-badge)
+[![Read the Docs](https://img.shields.io/readthedocs/django-osm-field?style=for-the-badge)](https://django-osm-field.readthedocs.io/)
+
+An OpenStreetMap field for Django.
+
+Documentation: https://django-osm-field.readthedocs.io/
+
+

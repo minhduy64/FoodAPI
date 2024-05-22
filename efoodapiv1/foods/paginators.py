@@ -6,4 +6,4 @@ class StorePaginator(pagination.PageNumberPagination):
 
 
 class CommentPaginator(pagination.PageNumberPagination):
-    page_size = 1
+    page_size = 2

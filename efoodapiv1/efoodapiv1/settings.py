@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'rest_framework',
     'drf_yasg',
-    'oauth2_provider'
+    'oauth2_provider',
+    'osm_field',
 ]
 
 CKEDITOR_UPLOAD_PATH = "ckeditor/images/stores/"
@@ -58,6 +59,15 @@ cloudinary.config(
     api_key="813547676212714",
     api_secret="2JFoOYSMgGMm827uX_qGBtbuhpg"
 )
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'nguyenminhduy060420@gmail.com'
+EMAIL_HOST_PASSWORD = 'ngzaeebxfiuvvtaw'
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -154,5 +164,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CLIENT_ID = 'FLxRT7HFEagjT0SN5UvQh9rdBW5UcozO5y6XsBpu'
-CLIENT_SECRET = 'qCayeEE4s8RrL0jQZwnZWXYw4WVhs54n78RpgJ8xYNV4VyCqVVnOvKvA6MA3aHRdho7sOqziDuKwgK0heBi2fk4bhKf23T21HxHI0zvdXgphJCbXqwtUB3yZcpskShZo'
+CLIENT_ID = 'GGY3ihAtQpAShnZLHN1ZJuyug7EOMHuuBUtfWygP'
+CLIENT_SECRET = '4due5bt4jvCQgrttrDBryuJulFJ27rFBkWYBuW7apDzp08NFj12VmtvvndiuTH5vbcnZhGVazetce0p6Nl4TasRo1yr1acCX7r2UP4Wo6LSGmTK6sUh1a67nN1gROg7x'

@@ -3,6 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from foods.models import Category, Store, MenuItem, User, Comment, LikeMenuItem
 from foods import serializers, paginators, perms
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
@@ -31,7 +33,12 @@ class StoreViewSet(viewsets.ViewSet, generics.ListAPIView):
 
     @action(methods=['get'], url_path='menu_items', detail=True)
     def get_menu_items(self, request, pk):
-        menu_items = self.get_object().menu_item_set.filter(active=True)
+        menu_items = self.get_object().menuitem_set.filter(active=True)
+
+        q = request.query_params.get('q')
+        if q:
+            menu_items = menu_items.filter(subject__icontains=q)
+
         return Response(serializers.MenuItemSerializer(menu_items, many=True).data,
                         status=status.HTTP_200_OK)
 
@@ -55,18 +62,18 @@ class MenuItemViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     @action(methods=['get'], url_path='comments', detail=True)
     def get_comments(self, request, pk):
         comments = self.get_object().comment_set.select_related('user').all()
-
         paginator = paginators.CommentPaginator()
         page = paginator.paginate_queryset(comments, request)
         if page is not None:
             serializer = serializers.CommentSerializer(page, many=True)
             return paginator.get_paginated_response(serializer.data)
 
-        return Response(serializers.CommentSerializer(comments, many=True).data)
+        return Response(serializers.CommentSerializer(comments, many=True).data
+                        , status=status.HTTP_200_OK)
 
     @action(methods=['post'], url_path='comments', detail=True)
     def add_comment(self, request, pk):
-        c = self.get_object().comment_set.create(content=request.data.get('content'),
+        c = self.get_object().comments.create(content=request.data.get('content'),
                                                  user=request.user)
         return Response(serializers.CommentSerializer(c).data, status=status.HTTP_201_CREATED)
 
@@ -81,11 +88,11 @@ class MenuItemViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
 
         return Response(serializers.MenuItemSerializer(self.get_object()).data)
 
+
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = User.objects.filter(is_active=True)
     serializer_class = serializers.UserSerializer
     parser_classes = [parsers.MultiPartParser]
-
 
     def get_permissions(self):
         if self.action in ['current_user']:
@@ -93,11 +100,10 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
 
         return [permissions.AllowAny()]
 
-
     @action(methods=['get', 'patch'], url_path='current-user', detail=False)
     def current_user(self, request):
         user = request.user
-        if request.method.__eq__ ('PATCH'):
+        if request.method.__eq__('PATCH'):
             for k, v in request.data.items():
                 setattr(user, k, v)
             user.save()
@@ -108,4 +114,14 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
 class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = serializers.CommentSerializer
-    permission_classes =[perms.CommnetOwner]
+    permission_classes = [perms.CommnetOwner]
+
+
+@login_required
+def follow_store(request, store_id):
+    store = get_object_or_404(Store, id=store_id)
+    if request.user in store.followers.all():
+        store.followers.remove(request.user)
+    else:
+        store.followers.add(request.user)
+    return redirect('store_detail', store_id=store_id)
