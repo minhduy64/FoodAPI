@@ -3,8 +3,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from foods.models import Category, Store, MenuItem, User, Comment, LikeMenuItem
 from foods import serializers, paginators, perms
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
@@ -117,11 +115,4 @@ class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView):
     permission_classes = [perms.CommnetOwner]
 
 
-@login_required
-def follow_store(request, store_id):
-    store = get_object_or_404(Store, id=store_id)
-    if request.user in store.followers.all():
-        store.followers.remove(request.user)
-    else:
-        store.followers.add(request.user)
-    return redirect('store_detail', store_id=store_id)
+#class OrderViewSet(viewsets.ViewSet, ):

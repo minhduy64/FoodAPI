@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from foods.models import Category, Store, MenuItem, Tag, User, Comment
+from foods.models import Category, Store, MenuItem, Tag, User, Comment, Order
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -77,3 +77,9 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'content', 'created_date', 'user']
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['id', 'store', 'menu_items', 'total_price']
