@@ -90,7 +90,7 @@ class MenuItemViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = User.objects.filter(is_active=True)
     serializer_class = serializers.UserSerializer
-    parser_classes = [parsers.MultiPartParser]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
 
     def get_permissions(self):
         if self.action in ['current_user']:

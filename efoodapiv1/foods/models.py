@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class User(AbstractUser):
-    avatar = CloudinaryField()
+    avatar = CloudinaryField(null=True)
     is_store_owner = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
 
@@ -25,7 +25,7 @@ class BaseModel(models.Model):
 
 class Category(BaseModel):
     name = models.CharField(max_length=255, unique=True)
-    icon = models.CharField(max_length=30, default='tag')
+    icon = CloudinaryField(max_length=1024)
 
     def __str__(self):
         return self.name
@@ -45,7 +45,8 @@ class Store(BaseModel):
     image = CloudinaryField()
     location = models.CharField(max_length=255)
     categories = models.ForeignKey(Category, on_delete=models.PROTECT)
-    map_location = models.CharField(max_length=255)
+    longitude = models.CharField(max_length=255)
+    latitude = models.CharField(max_length=255)
     approved = models.BooleanField(default=False)
 
     def __str__(self):

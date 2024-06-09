@@ -2,16 +2,21 @@ from rest_framework import serializers
 from foods.models import Category, Store, MenuItem, Tag, User, Comment, Order
 
 
+class ItemSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        req = super().to_representation(instance)
+        req['image'] = instance.image.url
+        return req
+
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
 
-
-class ItemSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         req = super().to_representation(instance)
-        req['image'] = instance.image.url
+        req['icon'] = instance.icon.url
         return req
 
 
@@ -22,9 +27,11 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class StoreSerializer(ItemSerializer):
+    category_name = serializers.CharField(source='categories.name', read_only=True)
+
     class Meta:
         model = Store
-        fields = ['id', 'name', 'image', 'created_date']
+        fields = ['id', 'name', 'description', 'image', 'location', 'longitude', 'latitude', 'approved', 'category_name']
 
 
 class MenuItemSerializer(ItemSerializer):
@@ -55,6 +62,14 @@ class AuthenticatedMenuItemDetailSerializer(MenuItemDetailSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    avatar = serializers.ImageField(required=False, allow_null=True)
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['avatar'] = instance.avatar.url
+
+        return rep
+
     def create(self, validated_data):
         data = validated_data.copy()
         user = User(**data)

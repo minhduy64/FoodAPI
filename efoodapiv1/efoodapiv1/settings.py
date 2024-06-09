@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-emjj%3lpq-*1l%(9g@5=07c5@+_mv-46o!v=rj5kjc1v@mh3&(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.1.234"]
 
 
 # Application definition
@@ -112,9 +112,9 @@ WSGI_APPLICATION = 'efoodapiv1.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'fooddbv1',
+        'NAME': 'fooddbv2',
         'USER': 'root',
-        'PASSWORD': 'Admin@123',
+        'PASSWORD': 'Admin123@',
         'HOST': ''
     }
 }
@@ -164,5 +164,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CLIENT_ID = 'GGY3ihAtQpAShnZLHN1ZJuyug7EOMHuuBUtfWygP'
-CLIENT_SECRET = '4due5bt4jvCQgrttrDBryuJulFJ27rFBkWYBuW7apDzp08NFj12VmtvvndiuTH5vbcnZhGVazetce0p6Nl4TasRo1yr1acCX7r2UP4Wo6LSGmTK6sUh1a67nN1gROg7x'
+CLIENT_ID = 'Gvp0f3SuubSVbPEJZCy87KjqEd5RwODQUiYhIZiK'
+CLIENT_SECRET = 'CRbU7AvDYuvKslP8ZzSjf4yGQQegl8yQaolYGkFT836VUs4YFRn8YH7TJzRHT2xNYC0HqQ2KZFxXdQPyCcUxgEx4FS7OnF2WZNQtcfMfePSHQM3jD7WVKISKqWh2xub5'
