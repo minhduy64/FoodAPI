@@ -3,12 +3,17 @@ from django.contrib.auth.models import AbstractUser
 from ckeditor.fields import RichTextField
 from cloudinary.models import CloudinaryField
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+from django.db.models import Avg
+from django.dispatch import receiver
+from django.db.models.signals import post_save, post_delete
 
 class User(AbstractUser):
     avatar = CloudinaryField(null=True)
     is_store_owner = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+    user_location = models.CharField(max_length=255, null=True, blank=True)
+    user_latitude = models.FloatField(null=True, blank=True)
+    user_longitude = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return self.username
@@ -48,6 +53,15 @@ class Store(BaseModel):
     longitude = models.CharField(max_length=255)
     latitude = models.CharField(max_length=255)
     approved = models.BooleanField(default=False)
+
+    @property
+    def rating(self):
+        reviews_count = self.reviews.count()
+        if reviews_count > 0:
+            avg_rating = self.reviews.aggregate(Avg('rating'))['rating__avg']
+            return round(avg_rating, 1)
+        else:
+            return 0.0
 
     def __str__(self):
         return f"{self.name} - {self.location}"
@@ -99,7 +113,7 @@ class ReviewStore(InteractionBase):
     rating = models.IntegerField(null=True, validators=[MinValueValidator(0), MaxValueValidator(10)])
 
     def __str__(self):
-        return f"Review for {self.store.name} by {self.user.username}"
+        return f"Review for {self.store.name} - {self.store.location} by {self.user.username}"
 
 
 class LikeMenuItem(InteractionBase):
@@ -168,3 +182,10 @@ class AdminRevenueReport(BaseModel):
 
     def __str__(self):
         return f"Admin Revenue Report on {self.report_date}"
+
+
+# Signal de cap nhat Store's rating khi ReviewStore đã lưu hoặc xóa
+@receiver(post_save, sender=ReviewStore)
+@receiver(post_delete, sender=ReviewStore)
+def update_store_rating(sender, instance, **kwargs):
+    instance.store.save()

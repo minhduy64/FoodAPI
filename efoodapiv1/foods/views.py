@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from foods.models import Category, Store, MenuItem, User, Comment, LikeMenuItem
 from foods import serializers, paginators, perms
 
+from geopy.distance import distance
+
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Category.objects.all()
@@ -23,7 +25,7 @@ class StoreViewSet(viewsets.ViewSet, generics.ListAPIView):
             if q:
                 queryset = queryset.filter(name__icontains=q)
 
-            cate_id = self.request.query_params.get('categories_id')
+            cate_id = self.request.query_params.get('category_id')
             if cate_id:
                 queryset = queryset.filter(categories_id=cate_id)
 
@@ -39,6 +41,28 @@ class StoreViewSet(viewsets.ViewSet, generics.ListAPIView):
 
         return Response(serializers.MenuItemSerializer(menu_items, many=True).data,
                         status=status.HTTP_200_OK)
+
+    @action(methods=['get'], url_path='nearby_stores', detail=False)
+    def get_nearby_stores(self, request):
+        try:
+            latitude = float(request.query_params.get('latitude'))
+            longitude = float(request.query_params.get('longitude'))
+        except (TypeError, ValueError):
+            return Response({'error': 'Invalid latitude or longitude'}, status=status.HTTP_400_BAD_REQUEST)
+
+        stores_within_10km = []
+        for store in self.queryset:
+            store_location = (store.latitude, store.longitude)
+            user_location = (latitude, longitude)
+            if distance(store_location, user_location).km <= 10:
+                stores_within_10km.append(store)
+
+        if not stores_within_10km:
+            return Response({'message': 'No stores found within 10 km'}, status=status.HTTP_404_NOT_FOUND)
+        
+        stores_within_10km = sorted(stores_within_10km, key=lambda store: store.rating, reverse=True)[:5]
+        serializer = self.get_serializer(stores_within_10km, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class MenuItemViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
@@ -72,7 +96,7 @@ class MenuItemViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
     @action(methods=['post'], url_path='comments', detail=True)
     def add_comment(self, request, pk):
         c = self.get_object().comments.create(content=request.data.get('content'),
-                                                 user=request.user)
+                                              user=request.user)
         return Response(serializers.CommentSerializer(c).data, status=status.HTTP_201_CREATED)
 
     @action(methods=['POST'], url_path='like', detail=True)
@@ -115,4 +139,5 @@ class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView):
     permission_classes = [perms.CommnetOwner]
 
 
-#class OrderViewSet(viewsets.ViewSet, ):
+
+# class OrderViewSet(viewsets.ViewSet, ) :

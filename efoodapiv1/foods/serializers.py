@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from foods.models import Category, Store, MenuItem, Tag, User, Comment, Order
+from foods.models import Category, Store, MenuItem, Tag, User, Comment, Order, ReviewStore
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -27,11 +27,11 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class StoreSerializer(ItemSerializer):
-    category_name = serializers.CharField(source='categories.name', read_only=True)
+    category_name = serializers.CharField(source='category.name', read_only=True)
 
     class Meta:
         model = Store
-        fields = ['id', 'name', 'description', 'image', 'location', 'longitude', 'latitude', 'approved', 'category_name']
+        fields = ['id', 'name', 'description', 'image', 'location', 'longitude', 'latitude', 'approved', 'category_name', 'rating']
 
 
 class MenuItemSerializer(ItemSerializer):
@@ -98,3 +98,9 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'store', 'menu_items', 'total_price']
+
+
+class ReviewStoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReviewStore, Store
+        fields = ['id', 'store', 'location', 'rating']

@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-emjj%3lpq-*1l%(9g@5=07c5@+_mv-46o!v=rj5kjc1v@mh3&(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.1.234"]
+ALLOWED_HOSTS = ["127.0.0.1"]
+
+#"192.168.1.234"
 
 
 # Application definition
@@ -114,7 +116,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'fooddbv2',
         'USER': 'root',
-        'PASSWORD': 'Admin123@',
+        'PASSWORD': 'Admin@123',
         'HOST': ''
     }
 }
