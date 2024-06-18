@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from foods.models import Category, Store, MenuItem, User, Comment, LikeMenuItem
 from foods import serializers, paginators, perms
+from rest_framework.views import APIView
 
 from geopy.distance import distance
 
@@ -42,27 +43,45 @@ class StoreViewSet(viewsets.ViewSet, generics.ListAPIView):
         return Response(serializers.MenuItemSerializer(menu_items, many=True).data,
                         status=status.HTTP_200_OK)
 
+    @action(methods=['get'], url_path='menu_items', detail=True)
+    def get_menu_items(self, request, pk):
+        menu_items = self.get_object().menuitem_set.filter(active=True)
+
+        q = request.query_params.get('q')
+        if q:
+            menu_items = menu_items.filter(subject__icontains=q)
+
+        return Response(serializers.MenuItemSerializer(menu_items, many=True).data,
+                        status=status.HTTP_200_OK)
+
     @action(methods=['get'], url_path='nearby_stores', detail=False)
     def get_nearby_stores(self, request):
+        user = request.user
+
+        if not user.is_authenticated:
+            return Response({'error': 'Authentication required'}, status=status.HTTP_401_UNAUTHORIZED)
+
         try:
-            latitude = float(request.query_params.get('latitude'))
-            longitude = float(request.query_params.get('longitude'))
+            latitude = float(user.user_latitude)
+            longitude = float(user.user_longitude)
         except (TypeError, ValueError):
-            return Response({'error': 'Invalid latitude or longitude'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Invalid user latitude or longitude'}, status=status.HTTP_400_BAD_REQUEST)
 
         stores_within_10km = []
         for store in self.queryset:
-            store_location = (store.latitude, store.longitude)
+            store_location = (float(store.latitude), float(store.longitude))
             user_location = (latitude, longitude)
             if distance(store_location, user_location).km <= 10:
                 stores_within_10km.append(store)
 
         if not stores_within_10km:
             return Response({'message': 'No stores found within 10 km'}, status=status.HTTP_404_NOT_FOUND)
-        
+
         stores_within_10km = sorted(stores_within_10km, key=lambda store: store.rating, reverse=True)[:5]
         serializer = self.get_serializer(stores_within_10km, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 
 
 class MenuItemViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
@@ -138,6 +157,15 @@ class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView):
     serializer_class = serializers.CommentSerializer
     permission_classes = [perms.CommnetOwner]
 
+class LikeStoreView(APIView):
+    def get_permissions(self):
+        return [permissions.IsAuthenticated()]
+
+    def post(self, request, format=None):
+        user_id = request.user.id
+        storeId = request.data.get('storeId', '')
+        LikeStore.objects.create(user_id=user_id, store_id=storeId)
+        return Response('', status=status.HTTP_200_OK)
 
 
 # class OrderViewSet(viewsets.ViewSet, ) :

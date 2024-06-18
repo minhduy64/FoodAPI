@@ -4,20 +4,18 @@ from ckeditor.fields import RichTextField
 from cloudinary.models import CloudinaryField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models import Avg
-from django.dispatch import receiver
-from django.db.models.signals import post_save, post_delete
+
 
 class User(AbstractUser):
     avatar = CloudinaryField(null=True)
     is_store_owner = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
-    user_location = models.CharField(max_length=255, null=True, blank=True)
-    user_latitude = models.FloatField(null=True, blank=True)
-    user_longitude = models.FloatField(null=True, blank=True)
+    user_location = models.CharField(max_length=255, null=True)#,default='Quan 1')
+    user_latitude = models.CharField(max_length=255, null=True)#,default='10.765505130395395')
+    user_longitude = models.CharField(max_length=255, null=True)#,default='106.68168869289711')
 
     def __str__(self):
         return self.username
-
 
 class BaseModel(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
@@ -182,10 +180,3 @@ class AdminRevenueReport(BaseModel):
 
     def __str__(self):
         return f"Admin Revenue Report on {self.report_date}"
-
-
-# Signal de cap nhat Store's rating khi ReviewStore đã lưu hoặc xóa
-@receiver(post_save, sender=ReviewStore)
-@receiver(post_delete, sender=ReviewStore)
-def update_store_rating(sender, instance, **kwargs):
-    instance.store.save()

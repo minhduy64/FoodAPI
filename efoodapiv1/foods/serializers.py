@@ -29,6 +29,10 @@ class TagSerializer(serializers.ModelSerializer):
 class StoreSerializer(ItemSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
 
+    def create(self, validated_data):
+        store = Store.objects.create(**validated_data)
+        return store
+
     class Meta:
         model = Store
         fields = ['id', 'name', 'description', 'image', 'location', 'longitude', 'latitude', 'approved', 'category_name', 'rating']
